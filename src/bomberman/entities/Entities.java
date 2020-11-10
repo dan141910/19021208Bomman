@@ -9,9 +9,9 @@ public abstract class Entities implements Render {
     protected boolean _remove = false; // to render or not
     protected Image _image;
 
-    public void update() {}
+    public abstract void update();
 
-    public void render(Graphics g) {}
+    public abstract void render(Graphics g);
 
     public void collide(Entities e) {
         // check boom and fire

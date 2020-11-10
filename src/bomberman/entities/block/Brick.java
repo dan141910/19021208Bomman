@@ -2,19 +2,28 @@ package bomberman.entities.block;
 
 import bomberman.entities.Entities;
 import bomberman.gameSeting.Configuration;
+import bomberman.graphics.Map;
 
 import java.awt.*;
 
 public class Brick extends Entities {
+    private boolean _break;
+    private int _time;
     public Brick(int x, int y) {
         setX(x);
         setY(y);
         setImage("res/img/icon_stone.png");
+        _break = false;
+        _time = 20;
     }
 
     @Override
     public void update() {
-        super.update();
+        if (_break) {
+            _time--;
+            setImage("res/img/icon_stone_break.png");
+        }
+        if (_time <= 0) removed();
     }
 
     @Override
@@ -23,7 +32,12 @@ public class Brick extends Entities {
     }
 
     @Override
-    public void collide(Entities e) {
-        super.collide(e);
+    public void removed() {
+        super.removed();
+        Map.setEntityAtLocate(getX(), getY(), null);
+    }
+
+    public void breaked() {
+        this._break = true;
     }
 }

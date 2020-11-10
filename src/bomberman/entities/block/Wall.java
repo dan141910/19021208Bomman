@@ -17,4 +17,8 @@ public class Wall extends Entities {
     public void render(Graphics g) {
         g.drawImage(get_image(), getX(),getY(), Configuration.game_measure, Configuration.game_measure, null);
     }
+
+    @Override
+    public void update() {}
+
 }

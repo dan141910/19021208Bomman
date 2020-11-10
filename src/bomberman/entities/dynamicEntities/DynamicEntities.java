@@ -8,8 +8,10 @@ public abstract class DynamicEntities extends Entities {
     protected int _hp = 1;
     protected int _speed = 1;
     private int _attack = 0;
+    protected int _timeAfter; // time to dead :>
     private int _size = Configuration.game_measure;
 
+    protected abstract void killed();
     //==================================================================================================================
     // GETTER AND SETTER
     //==================================================================================================================
@@ -42,7 +44,7 @@ public abstract class DynamicEntities extends Entities {
     }
 
     public void setSpeed(int speed) {
-        this._speed = speed;
+        this._speed = Math.min(speed, 5);
     }
 
     public boolean isLive() {

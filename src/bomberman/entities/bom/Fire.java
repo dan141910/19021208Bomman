@@ -1,14 +1,18 @@
 package bomberman.entities.bom;
 
-import bomberman.GUI.Board;
 import bomberman.entities.Entities;
+import bomberman.entities.block.Brick;
+import bomberman.entities.block.Gate;
+import bomberman.entities.dynamicEntities.DynamicEntities;
 import bomberman.gameSeting.Configuration;
+import bomberman.graphics.Map;
 
 import java.awt.*;
 
 public class Fire extends Entities {
     private int _dame;
     private int _time;
+
     public Fire(int x, int y, int dame) {
         setX(x);
         setY(y);
@@ -37,13 +41,17 @@ public class Fire extends Entities {
         return this._dame;
     }
 
-    //==================================================================================================================
+//==================================================================================================================
     // method
     //==================================================================================================================
 
     @Override
     public void update() {
-        if (getTime() > 0) setTime(getTime() - 1);
+        if (getTime() > 0) {
+            setTime(getTime() - 1);
+            //check collide
+            collide(Map.getEntityAtLocate(getX(), getY()));
+        }
         else {
             removed();
         }
@@ -56,6 +64,15 @@ public class Fire extends Entities {
 
     @Override
     public void collide(Entities e) {
-        super.collide (e);
+        if (e == null) return;
+        if (e instanceof DynamicEntities) {
+            ((DynamicEntities) e).setHp(((DynamicEntities) e).getHp() - this.getDame());
+        }
+        else if (e instanceof Boom) {
+            ((Boom) e).setTime(0);
+        }
+        else if (e instanceof Gate) {
+            if (!((Gate) e).isShow()) ((Gate) e).showed();
+        }
     }
 }

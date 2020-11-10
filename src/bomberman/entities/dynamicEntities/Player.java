@@ -3,7 +3,15 @@ package bomberman.entities.dynamicEntities;
 import bomberman.GUI.Board;
 import bomberman.GUI.menu.InfoPanel;
 import bomberman.entities.Entities;
+import bomberman.entities.block.Brick;
+import bomberman.entities.block.Gate;
+import bomberman.entities.block.Wall;
 import bomberman.entities.bom.Boom;
+import bomberman.entities.dynamicEntities.mods.Mob;
+import bomberman.entities.item.ItemBoomUp;
+import bomberman.entities.item.ItemFlameUp;
+import bomberman.entities.item.ItemSpeedUp;
+import bomberman.entities.item.Power;
 import bomberman.gameSeting.Configuration;
 import bomberman.gameSeting.Keyboard;
 import bomberman.graphics.Map;
@@ -27,20 +35,8 @@ public class Player extends DynamicEntities{
         setSize(Configuration.game_measure / 2);
         _remove = false;
         _board = board;
-        System.out.println("Create Player!");
+        _timeAfter = 20;
         setImage("res/img/icon_bomberman.png");
-    }
-
-    /**
-     * Process collide event.
-     * @param e is other entities.
-     */
-
-    @Override
-    public void collide(Entities e) {
-        if (e instanceof Boom) {
-            setHp( getHp() - ((Boom) e).getDame());
-        }
     }
 
     /**
@@ -49,18 +45,21 @@ public class Player extends DynamicEntities{
      * @param y is canvas Y coordinate.
      * @return true or false.
      */
-    private boolean isMove(int x, int y) {
-        int col = Map.getRealX(x) / Configuration.game_measure;
-        int row = Map.getRealY(y) / Configuration.game_measure;
-
-        switch (Map._maps[row].charAt(col)) {
-            case '#': return false;
-            case '*': return false;
+    private boolean canMove(int x, int y) {
+        Entities tmp = Map.getEntityAtLocate(x, y);
+        if (tmp instanceof Wall) return false;
+        if (tmp instanceof Gate && !((Gate) tmp).isActive()) return false;
+        if (tmp instanceof Boom ) {
+            if (Map.getEntityAtLocate(getX() , getY()) instanceof Boom ) return true;
+            if (Map.getEntityAtLocate(getX() + getSize(), getY()) instanceof Boom ) return true;
+            if (Map.getEntityAtLocate(getX(), getY() + getSize()) instanceof Boom ) return true;
+            return Map.getEntityAtLocate(getX() + getSize(), getY() + getSize()) instanceof Boom;
         }
-        return true;
+        return !(tmp instanceof Brick);
     }
-    @Override
-    public void update() {
+
+    //=============================== update segment =============================================
+    private void updateMove() {
         // update location
         int xa = getX(), ya = getY();
         if(_input.up) ya -= this.getSpeed();
@@ -68,42 +67,83 @@ public class Player extends DynamicEntities{
         if(_input.left) xa -= this.getSpeed();
         if(_input.right) xa += this.getSpeed();
 
-//        if(xa > 0 && xa < Configuration.game_width / 10 * 9 - Configuration.game_measure - 10)  {
-        if(isMove(xa, getY()) && isMove(xa + getSize(), getY()) &&
-                isMove(xa, getY() + getSize()) && isMove(xa + getSize(), getY() + getSize()) )  {
-            // check 4 goc
+        // change matrix
+        if (Map.getEntityAtLocate(getX(), getY()) instanceof Player)
+            Map.setEntityAtLocate(getX(), getY(),null);
+
+        if(canMove(xa, getY()) && canMove(xa + getSize(), getY()) &&
+                canMove(xa, getY() + getSize()) && canMove(xa + getSize(), getY() + getSize()) )  {
             setX(xa);
         }
-//        if(ya > 0 && ya < Configuration.game_height - Configuration.game_measure * 2) {
-        if(isMove(getX(), ya) && isMove(getX() + getSize(), ya + getSize()) &&
-                isMove(getX(), ya + getSize()) && isMove(getX() + getSize(), ya)) {
+
+        if(canMove(getX(), ya) && canMove(getX() + getSize(), ya + getSize()) &&
+                canMove(getX(), ya + getSize()) && canMove(getX() + getSize(), ya)) {
             setY(ya);
         }
 
+        // change matrix
+        if (Map.getEntityAtLocate(getX(), getY()) == null) Map.setEntityAtLocate(getX(), getY(), this);
+
+        // check gravity
+        collide( Map.getEntityAtLocate(getX() + getSize() / 2, getY() + getSize() / 2) );
+    }
+
+    private void detectBoom() {
         //update boom action
         if(_input.space) {
 
-            if (_timeToDecBom <= 0 && 0 < getNumBoom() ) {
-                setNumBoom(getNumBoom() - 1);
+            if (_timeToDecBom <= 0 && 0 < getNumBoom()) {
                 _timeToDecBom = 20;
-                Boom x = new Boom(Map.getRealX(getX()), Map.getRealY(getY()), 20, get_dameRange(), this, this._board);
+                Boom x = new Boom(Map.getRealX(getX()), Map.getRealY(getY()),
+                        20, get_dameRange(), this, this._board);
                 _board.addEntity(x);
             }
         }
         if (_timeToDecBom > 0) _timeToDecBom --;
-
-        //update info to pannel
-        InfoPanel.setHp(getHp());
-        InfoPanel.setPoints(getPoint());
     }
 
+    @Override
+    public void update() {
+        if (isLive()) {
+            updateMove();
+            detectBoom();
+        }
+        else killed();
+    }
+    @Override
+    protected void killed() {
+        if(_timeAfter > 0) {
+            setImage("res/img/mobs/modDead.png");
+            _timeAfter--;
+        }
+        else removed();
+    }
+
+    @Override
+    public void collide(Entities e) {
+        if (e instanceof Mob) {
+            setHp(getHp() - ((Mob) e).getAttack());
+            InfoPanel.notice(" Been Attacked by Mobs!");
+        }
+        else if (e instanceof Power) {
+            if (e instanceof ItemFlameUp) {
+                ((ItemFlameUp) e).toActive();
+            }else if (e instanceof ItemSpeedUp) {
+                ((ItemSpeedUp) e).toActive();
+            }else if (e instanceof ItemBoomUp) {
+                ((ItemBoomUp) e).toActive();
+            }
+        }
+        else if (e instanceof Gate && ((Gate) e).isActive()) {
+            _board.setPassGame(true);
+            setSpeed(0);
+        }
+    }
+
+    @Override
     public void render(Graphics g) {
-        g.setColor(new Color(0xCB4F954A, true));
-        g.fillRect(Map.getRealX(getX()), Map.getRealY(getY()), Configuration.game_measure, Configuration.game_measure);
-        g.drawImage(get_image(), getX(),getY(), getSize(), getSize(),null);
-
+         g.drawImage(get_image(), getX(),getY(), getSize(), getSize(),null);
     }
-
 
     //==================================================================================================================
     // GETTER AND SETTER
@@ -114,18 +154,19 @@ public class Player extends DynamicEntities{
     }
 
     public void setNumBoom(int numBoom) {
-        this._numBoom = numBoom;
+        this._numBoom = Math.min(numBoom,3);
     }
 
     public void set_input(Keyboard _input) {
         this._input = _input;
     }
 
-    public void setdameRange(int _dameRange) {
+    public void setDameRange(int _dameRange) {
         this._dameRange = _dameRange;
     }
 
     public int get_dameRange() {
         return _dameRange;
     }
+
 }
