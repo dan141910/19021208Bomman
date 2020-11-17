@@ -7,6 +7,7 @@ import bomberman.entities.block.Wall;
 import bomberman.entities.dynamicEntities.Player;
 import bomberman.gameSeting.Configuration;
 import bomberman.gameSeting.Sound;
+import bomberman.graphics.Images;
 import bomberman.graphics.Map;
 
 import javax.sound.sampled.LineUnavailableException;
@@ -33,7 +34,7 @@ public class Boom extends Entities {
         setY(y);
         setTime( 200 );
         Map.setEntityAtLocate(getX(), getY(), this);
-        setImage("res/img/icon_bomber.png");
+        setImage(Images.boom);
         this.board = board;
         this.player = player;
         this.player.setNumBoom(this.player.getNumBoom() - 1);

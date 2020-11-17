@@ -50,7 +50,7 @@ public class InfoPanel extends JPanel {
                 "\n  Speed = " + speed +
                 "\n ==========";
         text.setText(str);
-        helpText.setText(" =============\nControl : w, s, a, d, space\n Menu : f");
+        helpText.setText(" ============ \nControl : w, s, a, d, space\n Menu : f");
     }
 
     public static void notice(String mess) {

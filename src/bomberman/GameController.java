@@ -10,6 +10,11 @@ import bomberman.graphics.Render;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 
 /**
  * Control date game playing.
@@ -17,10 +22,10 @@ import java.awt.*;
 public class GameController extends Canvas implements Render {
     private  Board _board; // i4 about boardGame (number mod, map,...)
     private final Keyboard _input;
+    private String user;
 
     //Time in the level screen in seconds
     private boolean _running; // run is true other false;
-    private boolean _pause; // run is true other false;
     private Player _player;
 
     /**
@@ -33,7 +38,6 @@ public class GameController extends Canvas implements Render {
         _player = _board.getPlayer();
         _player.set_input(input);
         setSize(Configuration.game_width / 10 * 9, Configuration.game_height);
-
     }
 
     public void start() {
@@ -50,12 +54,7 @@ public class GameController extends Canvas implements Render {
                 delta--;
             }
 
-            if (isPause()) {
-                InfoPanel.notice("PAUSE GAME!");
-            } else {
-                // run Game
-                render(this.getGraphics());
-            }
+            if (isRunning()) render(this.getGraphics());
         }
 
     }
@@ -65,8 +64,7 @@ public class GameController extends Canvas implements Render {
         _input.update();
         _board.update();
         //update info to panel
-        InfoPanel.update(_player.getHp(), _player.getPoint(),
-                         _player.getNumBoom(), _player.get_dameRange(), _player.getSpeed());
+        InfoPanel.update(_player.getHp(), _player.getPoint(), _player.getNumBoom(), _player.get_dameRange(), _player.getSpeed());
         if (_player.isRemoved()) {
             endGame();
         }
@@ -91,7 +89,14 @@ public class GameController extends Canvas implements Render {
     public void openingGame() {
 
         int cf = JOptionPane.showConfirmDialog(new JFrame(), "Chơi không?");
-        if (cf == 0) run();
+        if (cf == 0) {
+            user = JOptionPane.showInputDialog(new JFrame(), "NHập tên của bạn");
+            if (user == null || user.equals("")) {
+                JOptionPane.showMessageDialog(new JFrame(), "thôi nghỉ nhé! ");
+                System.exit(-1);
+            }
+            else run();
+        }
         else {
             JOptionPane.showMessageDialog(new JFrame(), "thế mở ăn lone à?");
             System.exit(-1);
@@ -99,8 +104,8 @@ public class GameController extends Canvas implements Render {
     }
     public void endGame() {
         stop();
-        JOptionPane.showConfirmDialog(new JFrame(), "Game over ngu vcl");
-        System.exit(1);
+        int x = JOptionPane.showConfirmDialog(new JFrame(), "Game over! \n your point: " + _player.getPoint());
+        if (x < 3) showHighPoint();
     }
 
     public void nextGame(int level) {
@@ -120,8 +125,54 @@ public class GameController extends Canvas implements Render {
     }
 
     public void wingame() {
-        JOptionPane.showConfirmDialog(new JFrame(), "Thắng rồi đấy con zai!!!");
-        System.exit(1);
+        int x = JOptionPane.showConfirmDialog(new JFrame(), "U win game! \n Your point:" + _player.getPoint() + " point!!!");
+        if (x < 3) showHighPoint();
+    }
+
+    public void showHighPoint() {
+        JFrame pointBoard = new JFrame("High Point");
+        pointBoard.setLayout(new GridLayout(12,1));
+        Label x;
+        JButton btn = new JButton("Update!");
+
+        try{
+            BufferedReader bufferedReader = new BufferedReader(new FileReader( new File("res/highpoint.csv")));
+            String tmp;
+            String[] values;
+            while ((tmp = bufferedReader.readLine()) != null ) {
+                values = tmp.split(",");
+                System.out.println(tmp + "\n" + values[1] + " - " + values[0]);
+
+                x = new Label("   " + values[1] + " : " + values[0]);
+                pointBoard.add(x);
+            }
+            x = new Label("   " + this.user + " : " + this._player.getPoint());
+
+            x.setBackground(new Color(0x9E4545));
+            pointBoard.add(x);
+
+        } catch (Exception e) {
+            System.out.println("high point board error");
+            System.exit(-1);
+        }
+
+        btn.setSize(50, 30);
+        btn.addActionListener(e -> {
+            JOptionPane.showMessageDialog(new JFrame(),"Soạn tin nhắn \" NIHAOMA \" tới 0982482398 để sủ dụng tính năng");
+            // save point here
+        });
+
+        pointBoard.add(btn);
+        pointBoard.setVisible(true);
+        pointBoard.setSize(300, 400);
+        pointBoard.setLocation(500, 200);
+        pointBoard.setResizable(false);
+        pointBoard.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                pointBoard.dispose();
+                System.exit(1);
+            }
+        });
     }
 
     //=============================================================================================================
@@ -130,19 +181,13 @@ public class GameController extends Canvas implements Render {
 
     public void run() {
         _running = true;
-        _pause = false;
     }
     public void stop() {
         _running = false;
-    }
-
-    public void pause() {
-        _pause = true;
     }
 
     public boolean isRunning() {
         return _running;
     }
 
-    public boolean isPause() {return  _pause;}
 }

@@ -2,6 +2,7 @@ package bomberman.entities.block;
 
 import bomberman.entities.Entities;
 import bomberman.gameSeting.Configuration;
+import bomberman.graphics.Images;
 
 import java.awt.*;
 
@@ -10,7 +11,7 @@ public class Wall extends Entities {
     public Wall(int x, int y) {
         setX(x);
         setY(y);
-        setImage("res/img/icon_wall.png");
+        setImage(Images.wall);
     }
 
     @Override

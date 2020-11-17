@@ -3,6 +3,7 @@ package bomberman.entities.block;
 import bomberman.GUI.menu.InfoPanel;
 import bomberman.entities.Entities;
 import bomberman.gameSeting.Configuration;
+import bomberman.graphics.Images;
 import bomberman.graphics.Map;
 
 import java.awt.*;
@@ -14,7 +15,7 @@ public class Gate  extends Entities {
     public Gate(int x, int y) {
         setX(x);
         setY(y);
-        setImage("res/img/icon_stone.png");
+        setImage(Images.brick);
         _active = false;
         _show = false;
     }
@@ -25,7 +26,7 @@ public class Gate  extends Entities {
             setImage("res/img/gate/gate_" + animate++ + ".png");
             if (animate > 3) animate = 0;
         } else if (isShow()) {
-            setImage("res/img/gate/gate.png");
+            setImage(Images.gate);
             if (Map._numMobs == 0) actived();
         }
 

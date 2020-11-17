@@ -2,6 +2,7 @@ package bomberman.entities.block;
 
 import bomberman.entities.Entities;
 import bomberman.gameSeting.Configuration;
+import bomberman.graphics.Images;
 import bomberman.graphics.Map;
 
 import java.awt.*;
@@ -12,7 +13,7 @@ public class Brick extends Entities {
     public Brick(int x, int y) {
         setX(x);
         setY(y);
-        setImage("res/img/icon_stone.png");
+        setImage(Images.brick);
         _break = false;
         _time = 20;
     }
@@ -21,7 +22,7 @@ public class Brick extends Entities {
     public void update() {
         if (_break) {
             _time--;
-            setImage("res/img/icon_stone_break.png");
+            setImage(Images.brick_break);
         }
         if (_time <= 0) removed();
     }

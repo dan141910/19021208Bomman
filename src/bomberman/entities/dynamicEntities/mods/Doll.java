@@ -5,6 +5,7 @@ import bomberman.entities.block.Brick;
 import bomberman.entities.dynamicEntities.Player;
 import bomberman.entities.dynamicEntities.mods.AI.AILow;
 import bomberman.gameSeting.Configuration;
+import bomberman.graphics.Images;
 import bomberman.graphics.Map;
 
 import java.awt.*;
@@ -12,7 +13,7 @@ import java.awt.*;
 public class Doll extends Mob {
 
 	public Doll(int x, int y, Player player) {
-		super(x, y,"res/img/mobs/doll.png", 1,50,
+		super(x, y, Images.mob_doll, 2, 50,
 			  Configuration.game_measure / 5 * 2, player);
 
 		setAttack(5);
@@ -70,7 +71,7 @@ public class Doll extends Mob {
 	public void collide(Entities entities) {
 		if (entities instanceof Brick) {
 			((Brick) entities).breaked();
-		}
+		} else super.collide(entities);
 	}
 
 	@Override
@@ -78,4 +79,9 @@ public class Doll extends Mob {
 		g.drawImage(get_image(), getX(), getY(), getSize(), getSize() * 2, null);
 	}
 
+	@Override
+	public void removed() {
+		_player.setSpeed(_player.getSpeed() - 1);
+		super.removed();
+	}
 }

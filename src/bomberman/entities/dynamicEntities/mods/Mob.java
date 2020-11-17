@@ -80,12 +80,12 @@ public abstract class Mob extends DynamicEntities {
             _steps = MAX_STEPS;
         }
 
-        if(_direction == 0) ya -= getSpeed();
-        if(_direction == 2) ya += getSpeed();
-        if(_direction == 3) xa -= getSpeed();
-        if(_direction == 1) xa += getSpeed();
+        if(_direction == 0) ya -= getSpeed(); // 0 = up
+        if(_direction == 2) ya += getSpeed(); // 2 = down
+        if(_direction == 3) xa -= getSpeed(); // 3 = left
+        if(_direction == 1) xa += getSpeed(); // 1 = right
 
-        Map.setEntityAtLocate(getX(), getY(),null);
+        if (Map.getEntityAtLocate(getX(), getY()) == this) Map.setEntityAtLocate(getX(), getY(), null);
 
         if(canMove(xa, getY()) && canMove(xa + getSize(), getY()) &&
                 canMove(xa, getY() + getSize()) && canMove(xa + getSize(), getY() + getSize()) )  {
@@ -99,7 +99,10 @@ public abstract class Mob extends DynamicEntities {
 
         _steps -= 1;
         // change matrix
-        if (Map.getEntityAtLocate(getX(), getY()) == null) Map.setEntityAtLocate(getX(), getY(), this);
+        if (Map.getEntityAtLocate(getX(), getY()) == null) Map.setEntityAtLocate(getX(), getY(), this) ;
+
+        // check collide _player;
+        if (Math.abs(_player.getY() - getY()) < getSize() && Math.abs(_player.getX() - getX()) < getSize()) collide(_player);
     }
 
 
@@ -115,4 +118,10 @@ public abstract class Mob extends DynamicEntities {
         return tmp instanceof Player;
     }
 
+    @Override
+    public void collide(Entities e) {
+        if (e instanceof Player) {
+            ((Player) e ).setHp(( (Player) e ).getHp() - getAttack());
+        }
+    }
 }

@@ -30,19 +30,22 @@ public class BommanApp extends JFrame{
         //add key
         addKeyListener(input);
         requestFocus();
+
+    }
+
+    public void runGame() {
         setVisible(true);
 
         // start game
-        Sound theme = null;
+        Sound theme;
         try {
             theme = new Sound(Sound.sound_theme1, true);
             theme.play();
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
         }
-       gameController.openingGame();
-       gameController.start();
-
+        gameController.openingGame();
+        gameController.start();
 
     }
 

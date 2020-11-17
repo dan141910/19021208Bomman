@@ -1,19 +1,18 @@
 package bomberman.entities.dynamicEntities;
 
 import bomberman.GUI.Board;
-import bomberman.GUI.menu.InfoPanel;
 import bomberman.entities.Entities;
 import bomberman.entities.block.Brick;
 import bomberman.entities.block.Gate;
 import bomberman.entities.block.Wall;
 import bomberman.entities.bom.Boom;
-import bomberman.entities.dynamicEntities.mods.Mob;
 import bomberman.entities.item.ItemBoomUp;
 import bomberman.entities.item.ItemFlameUp;
 import bomberman.entities.item.ItemSpeedUp;
 import bomberman.entities.item.Power;
 import bomberman.gameSeting.Configuration;
 import bomberman.gameSeting.Keyboard;
+import bomberman.graphics.Images;
 import bomberman.graphics.Map;
 
 import java.awt.*;
@@ -21,7 +20,7 @@ import java.awt.*;
 public class Player extends DynamicEntities{
     private int _numBoom = 1;
     private int _timeToDecBom = 0;
-    private int _dameRange = 2;
+    private int _dameRange = 1;
     private Keyboard _input;
     private final Board _board;
 
@@ -36,7 +35,7 @@ public class Player extends DynamicEntities{
         _remove = false;
         _board = board;
         _timeAfter = 20;
-        setImage("res/img/icon_bomberman.png");
+        setImage(Images.player);
     }
 
     /**
@@ -121,11 +120,7 @@ public class Player extends DynamicEntities{
 
     @Override
     public void collide(Entities e) {
-        if (e instanceof Mob) {
-            setHp(getHp() - ((Mob) e).getAttack());
-            InfoPanel.notice(" Been Attacked by Mobs!");
-        }
-        else if (e instanceof Power) {
+        if (e instanceof Power) {
             if (e instanceof ItemFlameUp) {
                 ((ItemFlameUp) e).toActive();
             }else if (e instanceof ItemSpeedUp) {

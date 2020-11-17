@@ -5,6 +5,7 @@ import bomberman.entities.block.Brick;
 import bomberman.entities.block.Gate;
 import bomberman.entities.dynamicEntities.DynamicEntities;
 import bomberman.gameSeting.Configuration;
+import bomberman.graphics.Images;
 import bomberman.graphics.Map;
 
 import java.awt.*;
@@ -18,7 +19,7 @@ public class Fire extends Entities {
         setY(y);
         setDame(dame);
         setTime(40);
-        setImage ("res/img/icon_fire.png");
+        setImage (Images.fire);
     }
 
     //==================================================================================================================

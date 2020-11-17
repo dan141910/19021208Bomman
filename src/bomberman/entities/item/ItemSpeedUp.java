@@ -2,12 +2,13 @@ package bomberman.entities.item;
 
 import bomberman.GUI.menu.InfoPanel;
 import bomberman.entities.dynamicEntities.Player;
+import bomberman.graphics.Images;
 import bomberman.graphics.Map;
 
 public class ItemSpeedUp extends Power {
 
     public ItemSpeedUp(int x, int y, Player player) {
-        super(x, y, "res/img/icon_power_speedup.png", player);
+        super(x, y, Images.item_speedUp, player);
         setValue(1);
     }
 
