@@ -34,14 +34,15 @@ public class AIHigh extends  AI{
     @Override
     public int calculateDirection() {
         int measure = Configuration.game_measure;
-        // thuat toan tim duong BAN TAY PHAI
+
         int playerCol = Map.getRealX(_player.getX()) / Configuration.game_measure;
         int playerRow = Map.getRealY(_player.getY()) / Configuration.game_measure;
         int mobCol = Map.getRealX(_mob.getX()) / Configuration.game_measure;
         int mobRow = Map.getRealY(_mob.getY()) / Configuration.game_measure;
-        if ((playerCol - mobCol) * (playerCol - mobCol) + (playerRow - mobRow) * (playerRow - mobRow) >  9 && _target == 0) {
+        if ((playerCol - mobCol) * (playerCol - mobCol) + (playerRow - mobRow) * (playerRow - mobRow) >  9 ) {
             // no target and away from player
             _curDirection = new Random().nextInt(4);
+            _target = 0;
         }
         else {
             if (_target == mobRow * Configuration.game_cols + mobCol) _target = 0;

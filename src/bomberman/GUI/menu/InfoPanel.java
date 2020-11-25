@@ -42,7 +42,7 @@ public class InfoPanel extends JPanel {
 
 
     public static void update(int hp, int point, int booms, int rangeboom, int speed) {
-        String str = "Level " + Map._level  +
+        String str = "L" + Map._level  + " Mobs :" + Map._numMobs +
                 "\n  HP = " + hp +
                 "\n  Point = " + point +
                 "\n  Booms = " + booms +
@@ -50,7 +50,7 @@ public class InfoPanel extends JPanel {
                 "\n  Speed = " + speed +
                 "\n ==========";
         text.setText(str);
-        helpText.setText(" ============ \nControl : w, s, a, d, space\n Menu : f");
+        helpText.setText(" ============ \nControl : w, s, a, d, space\n Tiêu diệt hết mob và tìm cổng ra");
     }
 
     public static void notice(String mess) {

@@ -22,4 +22,9 @@ public class Wall extends Entities {
     @Override
     public void update() {}
 
+    @Override
+    public void removed() {
+        super.removed();
+
+    }
 }

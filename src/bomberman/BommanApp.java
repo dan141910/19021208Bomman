@@ -21,6 +21,7 @@ public class BommanApp extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(Configuration.game_width, Configuration.game_height);
         setLocationRelativeTo(null);
+
         //gameController
         gameController = new GameController(input);
         //add InfoPanel
@@ -34,19 +35,18 @@ public class BommanApp extends JFrame{
     }
 
     public void runGame() {
-        setVisible(true);
-
-        // start game
-        Sound theme;
-        try {
-            theme = new Sound(Sound.sound_theme1, true);
-            theme.play();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
-        }
-        gameController.openingGame();
-        gameController.start();
-
+       if ( gameController.openingGame()) {
+           setVisible(true);
+           // start game
+           Sound theme;
+           try {
+               theme = new Sound(Sound.sound_theme1, true);
+               theme.play();
+           } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+               e.printStackTrace();
+           }
+           gameController.start();
+       }
     }
 
 }

@@ -6,17 +6,15 @@ import bomberman.entities.dynamicEntities.DynamicEntities;
 import bomberman.entities.dynamicEntities.Player;
 import bomberman.entities.dynamicEntities.mods.AI.AI;
 import bomberman.gameSeting.Configuration;
+import bomberman.graphics.Images;
 import bomberman.graphics.Map;
 
 import java.awt.*;
 
 public abstract class Mob extends DynamicEntities {
     protected AI _ai;
-    protected int _direction;
     protected Player _player;
-
     //necessary to correct move
-    protected int MAX_STEPS;
     protected int _steps;
 
     public Mob(int x, int y, String img, int speed, int points,int size, Player player) {
@@ -29,8 +27,7 @@ public abstract class Mob extends DynamicEntities {
 
         _timeAfter = 20;
         _player = player;
-        MAX_STEPS = Configuration.game_measure / speed;
-        _steps = MAX_STEPS;
+        _steps = Configuration.game_measure / speed;
     }
 
     //=============================================================================================================
@@ -40,10 +37,12 @@ public abstract class Mob extends DynamicEntities {
     @Override
     public void update() {
         if(!isLive()) {
-            setImage("res/img/mobs/modDead.png");
+            setImage(Images.mob_dead);
             killed();
         }
-        else calculateMove();
+        else {
+            calculateMove();
+        }
     }
 
     protected void killed() {
@@ -63,8 +62,7 @@ public abstract class Mob extends DynamicEntities {
     @Override
     public void render(Graphics g) {
         g.setColor(new Color(0xCB4F954A, true));
-        g.fillRect(Map.getRealX(getX()), Map.getRealY(getY()), Configuration.game_measure, Configuration.game_measure);
-        g.drawImage(get_image(), getX(), getY(), getSize(), getSize(), null);
+        g.fillRect(_preX, _preY, getSize(), getSize());
     }
 
     /*
@@ -72,12 +70,14 @@ public abstract class Mob extends DynamicEntities {
 	| Mob Move
 	|--------------------------------------------------------------------------
 	 */
+
     public void calculateMove() {
-        int xa = getX(), ya = getY();
+        _preX = getX(); _preY = getY();
+        int xa = _preX, ya = _preY;
 
         if(_steps <= 0){
             _direction = _ai.calculateDirection();
-            _steps = MAX_STEPS;
+            _steps = Configuration.game_measure / getSpeed();
         }
 
         if(_direction == 0) ya -= getSpeed(); // 0 = up
@@ -86,23 +86,13 @@ public abstract class Mob extends DynamicEntities {
         if(_direction == 1) xa += getSpeed(); // 1 = right
 
         if (Map.getEntityAtLocate(getX(), getY()) == this) Map.setEntityAtLocate(getX(), getY(), null);
+        if (checkBound(xa, getY(), getSize(), getSize())) setX(xa);_steps -= 1;
+        if (checkBound(getX(), ya, getSize(), getSize())) setY(ya);_steps -= 1;
 
-        if(canMove(xa, getY()) && canMove(xa + getSize(), getY()) &&
-                canMove(xa, getY() + getSize()) && canMove(xa + getSize(), getY() + getSize()) )  {
-            setX(xa);
-        }
-
-        if(canMove(getX(), ya) && canMove(getX() + getSize(), ya + getSize()) &&
-                canMove(getX(), ya + getSize()) && canMove(getX() + getSize(), ya)) {
-            setY(ya);
-        }
-
-        _steps -= 1;
         // change matrix
-        if (Map.getEntityAtLocate(getX(), getY()) == null) Map.setEntityAtLocate(getX(), getY(), this) ;
-
-        // check collide _player;
-        if (Math.abs(_player.getY() - getY()) < getSize() && Math.abs(_player.getX() - getX()) < getSize()) collide(_player);
+        Entities tmp = Map.getEntityAtLocate(getX(), getY());
+        collide(tmp);
+        if (tmp == null || tmp instanceof Player) Map.setEntityAtLocate(getX(), getY(), this) ;
     }
 
 
@@ -114,14 +104,20 @@ public abstract class Mob extends DynamicEntities {
      */
     public boolean canMove(int x, int y) {
         Entities tmp = Map.getEntityAtLocate(x, y);
-        if (tmp == null) return true;
-        return tmp instanceof Player;
+        if (tmp instanceof DynamicEntities) return true;
+        return tmp == null ;
     }
 
-    @Override
-    public void collide(Entities e) {
-        if (e instanceof Player) {
-            ((Player) e ).setHp(( (Player) e ).getHp() - getAttack());
-        }
+    /**
+     * check 4 point of image.
+     * @param xa new x.
+     * @param ya new y.
+     * @param width width image.
+     * @param height height image.
+     * @return whether any point will be collide.
+     */
+    protected boolean checkBound(int xa, int ya, int width, int height) {
+        return canMove(xa, ya) && canMove(xa + width, ya) &&
+                canMove(xa, ya + height) && canMove(xa + width, ya + height);
     }
 }

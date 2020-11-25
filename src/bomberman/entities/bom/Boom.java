@@ -7,6 +7,7 @@ import bomberman.entities.block.Wall;
 import bomberman.entities.dynamicEntities.Player;
 import bomberman.gameSeting.Configuration;
 import bomberman.gameSeting.Sound;
+import bomberman.graphics.Animation;
 import bomberman.graphics.Images;
 import bomberman.graphics.Map;
 
@@ -15,12 +16,12 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
 import java.io.IOException;
 
-public class Boom extends Entities {
+public class Boom extends Entities implements Animation {
     private int range;
     private int dame;
     private int time;
     private final int TIME_COUNT = 20; // Time to burn
-    private int _timeAfter;
+    private int _timeAfter; // Time to burn + time for player exit
     private final Player player;
     private final Board board;
     //sound
@@ -125,17 +126,17 @@ public class Boom extends Entities {
 
     @Override
     public void update(){
+
         if (getTime() > 0) {
             setTime(getTime() - 2);
-        }
-        else {
+            animate();
+        } else {
             if (_timeAfter == TIME_COUNT) fire();
             //sound
             if (_timeAfter > 0) {
                 _timeAfter--;
                 if (!sound.isPlay()) sound.play();
-            }
-            else {
+            } else {
                 removed();
                 player.setNumBoom(player.getNumBoom() + 1 );
                 sound.stop();
@@ -148,5 +149,11 @@ public class Boom extends Entities {
     public void removed() {
         super.removed();
         Map.setEntityAtLocate(getX(), getY(), null);
+    }
+
+    @Override
+    public void animate() {
+        if (getTime() % 40 == 20) setImage(Images.boom1);
+        else if (getTime() % 40 == 0) setImage(Images.boom);
     }
 }

@@ -22,13 +22,22 @@ public class Brick extends Entities {
     public void update() {
         if (_break) {
             _time--;
-            setImage(Images.brick_break);
+            if (_time == 16) setImage(Images.brick_break1);
+            else if (_time == 12) setImage(Images.brick_break2);
+            else if (_time == 8) setImage(Images.brick_break3);
+            else if (_time == 4) setImage(Images.brick_break4);
+            else if (_time == 2) setImage(Images.brick_break5);
+
         }
         if (_time <= 0) removed();
     }
 
     @Override
     public void render(Graphics g) {
+        if (_break){
+            g.setColor(new Color(0xCB4F954A, true));
+            g.fillRect(getX(),getY(), Configuration.game_measure,Configuration.game_measure);
+        }
         g.drawImage(get_image(), getX(),getY(), Configuration.game_measure, Configuration.game_measure, null);
     }
 
@@ -40,5 +49,6 @@ public class Brick extends Entities {
 
     public void breaked() {
         this._break = true;
+        setImage(Images.brick_break);
     }
 }

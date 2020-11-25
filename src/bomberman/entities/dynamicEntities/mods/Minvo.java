@@ -5,6 +5,8 @@ import bomberman.entities.dynamicEntities.mods.AI.AIHigh;
 import bomberman.gameSeting.Configuration;
 import bomberman.graphics.Images;
 
+import java.awt.*;
+
 public class Minvo extends Mob {
 
     public Minvo(int x, int y, Player player) {
@@ -12,5 +14,11 @@ public class Minvo extends Mob {
         setAttack(5);
         _ai = new AIHigh(player, this);
         _direction = _ai.calculateDirection();
+    }
+
+    @Override
+    public void render(Graphics g) {
+        super.render(g);
+        g.drawImage(get_image(), getX(), getY(), getSize(), getSize(), null);
     }
 }

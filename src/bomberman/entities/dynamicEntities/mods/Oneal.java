@@ -1,10 +1,11 @@
 package bomberman.entities.dynamicEntities.mods;
 
-import bomberman.GUI.menu.InfoPanel;
 import bomberman.entities.dynamicEntities.Player;
 import bomberman.entities.dynamicEntities.mods.AI.AIMedium;
 import bomberman.gameSeting.Configuration;
 import bomberman.graphics.Images;
+
+import java.awt.*;
 
 public class Oneal extends Mob {
 
@@ -16,4 +17,9 @@ public class Oneal extends Mob {
         _player = player;
     }
 
+    @Override
+    public void render(Graphics g) {
+        super.render(g);
+        g.drawImage(get_image(), getX(), getY(), getSize(), getSize(), null);
+    }
 }

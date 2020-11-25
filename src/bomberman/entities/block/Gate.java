@@ -3,15 +3,16 @@ package bomberman.entities.block;
 import bomberman.GUI.menu.InfoPanel;
 import bomberman.entities.Entities;
 import bomberman.gameSeting.Configuration;
+import bomberman.graphics.Animation;
 import bomberman.graphics.Images;
 import bomberman.graphics.Map;
 
 import java.awt.*;
 
-public class Gate  extends Entities {
+public class Gate  extends Entities implements Animation {
     boolean _show;
     boolean _active;
-    int animate = 0;
+    int animate = 100;
     public Gate(int x, int y) {
         setX(x);
         setY(y);
@@ -23,11 +24,10 @@ public class Gate  extends Entities {
     @Override
     public void update() {
         if (isActive()) {
-            setImage("res/img/gate/gate_" + animate++ + ".png");
-            if (animate > 3) animate = 0;
+            animate();
         } else if (isShow()) {
             setImage(Images.gate);
-            if (Map._numMobs == 0) actived();
+            if (Map._numMobs <= 0) actived();
         }
 
 
@@ -37,6 +37,19 @@ public class Gate  extends Entities {
     public void render(Graphics g) {
         g.drawImage(get_image(), getX(), getY(),
                     Configuration.game_measure, Configuration.game_measure,null);
+    }
+
+    @Override
+    public void animate() {
+        animate--;
+        if (animate < 0) animate = 30;
+        if (animate % 30 == 8) {
+            setImage(Images.gate1);
+        } else if (animate % 30 == 18) {
+            setImage(Images.gate2);
+        } else if (animate % 30 == 26) {
+            setImage(Images.gate3);
+        }
     }
 
     //=========================================================================================================
@@ -54,10 +67,10 @@ public class Gate  extends Entities {
 
     public void showed() {
         this._show = true;
-        InfoPanel.notice("You finded The Gate!");
     }
 
     public boolean isShow() {
         return _show;
     }
+
 }

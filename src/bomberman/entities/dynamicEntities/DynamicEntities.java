@@ -6,12 +6,16 @@ import bomberman.gameSeting.Configuration;
 public abstract class DynamicEntities extends Entities {
     protected int _point = 1;
     protected int _hp = 1;
-    protected int _speed = 1;
+    protected int _speed = 1; //move
+    protected int _direction;
     private int _attack = 0;
     protected int _timeAfter; // time to dead :>
     private int _size = Configuration.game_measure;
+    protected int _preX;
+    protected int _preY;
 
     protected abstract void killed();
+
     //==================================================================================================================
     // GETTER AND SETTER
     //==================================================================================================================

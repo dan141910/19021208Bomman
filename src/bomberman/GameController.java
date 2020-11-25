@@ -29,7 +29,7 @@ public class GameController extends Canvas implements Render {
     private Player _player;
 
     /**
-     * Khoi tao.
+     * Initial.
      * @param input keyboard.
      */
     public GameController(Keyboard input) {
@@ -65,17 +65,13 @@ public class GameController extends Canvas implements Render {
         _board.update();
         //update info to panel
         InfoPanel.update(_player.getHp(), _player.getPoint(), _player.getNumBoom(), _player.get_dameRange(), _player.getSpeed());
-        if (_player.isRemoved()) {
-            endGame();
-        }
-        if (_board.isPassGame()) {
-            nextGame(++Map._level);
-        }
+        if (_player.isRemoved()) { endGame();}
+        if (_board.isPassGame()) { nextGame(++Map._level);}
     }
 
     @Override
     public void render(Graphics g) {
-        if (System.nanoTime() % 10000 == 0) {
+        if (System.nanoTime() % 20000 == 0) {
             g.setColor(new Color(0xCB4F954A, true));
             g.fillRect(0, 0, Configuration.game_width / 10 * 9, Configuration.game_height);
         }
@@ -83,28 +79,21 @@ public class GameController extends Canvas implements Render {
     }
 
     //=============================================================================================================
-    //Level Game
+    //Scene Game
     //=============================================================================================================
 
-    public void openingGame() {
-
-        int cf = JOptionPane.showConfirmDialog(new JFrame(), "Chơi không?");
-        if (cf == 0) {
-            user = JOptionPane.showInputDialog(new JFrame(), "NHập tên của bạn");
-            if (user == null || user.equals("")) {
-                JOptionPane.showMessageDialog(new JFrame(), "thôi nghỉ nhé! ");
-                System.exit(-1);
-            }
-            else run();
-        }
-        else {
-            JOptionPane.showMessageDialog(new JFrame(), "thế mở ăn lone à?");
+    public boolean openingGame() {
+        user = JOptionPane.showInputDialog(new JFrame(), "Nhập tên của bạn");
+        if (user == null || user.equals("")) {
+            JOptionPane.showMessageDialog(new JFrame(), "thôi nghỉ nhé!");
             System.exit(-1);
-        }
+            return false;
+        } else return true;
     }
+
     public void endGame() {
         stop();
-        int x = JOptionPane.showConfirmDialog(new JFrame(), "Game over! \n your point: " + _player.getPoint());
+        int x = JOptionPane.showConfirmDialog(new JFrame(), "Game over! \n Your point: " + _player.getPoint());
         if (x < 3) showHighPoint();
     }
 
@@ -133,7 +122,7 @@ public class GameController extends Canvas implements Render {
         JFrame pointBoard = new JFrame("High Point");
         pointBoard.setLayout(new GridLayout(12,1));
         Label x;
-        JButton btn = new JButton("Update!");
+        JButton btn = new JButton("Update");
 
         try{
             BufferedReader bufferedReader = new BufferedReader(new FileReader( new File("res/highpoint.csv")));
@@ -141,9 +130,7 @@ public class GameController extends Canvas implements Render {
             String[] values;
             while ((tmp = bufferedReader.readLine()) != null ) {
                 values = tmp.split(",");
-                System.out.println(tmp + "\n" + values[1] + " - " + values[0]);
-
-                x = new Label("   " + values[1] + " : " + values[0]);
+                x = new Label("   " + values[0] + " : " + values[1]);
                 pointBoard.add(x);
             }
             x = new Label("   " + this.user + " : " + this._player.getPoint());

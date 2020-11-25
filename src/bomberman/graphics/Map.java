@@ -18,8 +18,7 @@ import java.util.Scanner;
 public class Map {
     public static final Entities[] _matrix = new Entities[Configuration.game_cols * Configuration.game_rows + 1];
     public static int _numMobs = 0;
-    public static int _level = 1
-            ;
+    public static int _level = 1;
     // init map
     public static void initMap(Board board) {
         try {
