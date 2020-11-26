@@ -7,6 +7,7 @@ import bomberman.entities.block.Gate;
 import bomberman.entities.block.Wall;
 import bomberman.entities.bom.Boom;
 import bomberman.entities.dynamicEntities.mods.Mob;
+import bomberman.entities.dynamicEntities.mods.Pet;
 import bomberman.entities.item.ItemBoomUp;
 import bomberman.entities.item.ItemFlameUp;
 import bomberman.entities.item.ItemSpeedUp;
@@ -20,13 +21,14 @@ import bomberman.graphics.Map;
 import java.awt.*;
 
 public class Player extends DynamicEntities implements Animation {
-    private int _numBoom = 1;
+    private int _numBoom = 1; // boom
     private int _timeToDecBom = 0;
     private int _dameRange = 1;
-    private Keyboard _input;
+    private Keyboard _input; // input
     private final Board _board;
     private boolean _ismove;
-    private int _animate = 0;
+    private int _animate = 0; //animate
+    private final Pet _pet; //pet
 
     public Player(int x, int y, Board board) {
         setHp( 100 );
@@ -40,6 +42,9 @@ public class Player extends DynamicEntities implements Animation {
         _board = board;
         _timeAfter = 20;
         setImage(Images.player);
+        // defaul pet
+        _pet = new Pet(x, y,Images.pet1, this);
+        _board.addEntity(_pet);
     }
 
     /**
@@ -118,12 +123,20 @@ public class Player extends DynamicEntities implements Animation {
         if (_timeToDecBom > 0) _timeToDecBom --;
     }
 
+    //pet
+    private void detectPet() {
+       if (_input.pet) {
+           _pet.summon();
+       }
+    }
+
     @Override
     public void update() {
         if (isLive()) {
-            updateMove();
-            detectBoom();
-            animateTime();
+            updateMove(); // update movement
+            detectBoom(); // update behavior
+            detectPet(); // update pets summoning
+            animateTime(); // update animation
             animate();
         }
         else killed();

@@ -67,5 +67,6 @@ public class Images {
     public static String boom = "res/img/icon_bomber.png";
     public static String boom1 = "res/img/icon_bomber1.png";
 
-
+    // pets
+    public static String pet1 = "res/img/pets/pet1.png";
 }
