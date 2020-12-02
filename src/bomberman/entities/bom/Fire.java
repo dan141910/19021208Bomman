@@ -49,12 +49,12 @@ public class Fire extends Entities implements Animation {
 
     @Override
     public void update() {
+        collide(Map.getEntityAtLocate(getX(), getY()));
         if (getTime() > 0) {
             setTime(getTime() - 1);
-            //check collide
-            collide(Map.getEntityAtLocate(getX(), getY()));
             //animation
             animate();
+            //check collide
         }
         else {
             removed();

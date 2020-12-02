@@ -126,7 +126,6 @@ public class Boom extends Entities implements Animation {
 
     @Override
     public void update(){
-
         if (getTime() > 0) {
             setTime(getTime() - 2);
             animate();

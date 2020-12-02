@@ -110,7 +110,8 @@ public class Player extends DynamicEntities implements Animation {
     private void detectBoom() {
         //update boom action
         if(_input.space) {
-            if (Map.getEntityAtLocate(getX() + getSize() / 2, getY() + getSize() / 2) instanceof Player) {
+            if (Map.getEntityAtLocate(getX() + getSize() / 2, getY() + getSize() / 2) instanceof Player ||
+                    Map.getEntityAtLocate(getX() + getSize() / 2, getY() + getSize() / 2) == null) {
                 if (_timeToDecBom <= 0 && 0 < getNumBoom()) {
                     _timeToDecBom = 20;
                     Boom x = new Boom(Map.getRealX(getX() + getSize() / 2),
